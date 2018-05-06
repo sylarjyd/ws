@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 导入xsd xml文件的约束 -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+       <!-- 实例化数据库连接池 -->
+       <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+       		<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+			<property name="url" value="jdbc:mysql://localhost:3306/ssm"></property>
+			<property name="username" value="root"></property>
+			<property name="password" value="123589"></property>
+			
+       </bean>
+       <!-- 实例化SqlSessionFactory -->
+       <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+       		<!-- 注入dataSource -->
+       		<property name="dataSource" ref="dataSource"></property>
+       		<!-- 配置分页插件拦截器 -->
+       		<property name="plugins">
+       			<list>
+       				<bean class="com.github.pagehelper.PageHelper">
+       					<property name="properties">
+       						<props>
+       							<prop key="dialect">mysql</prop>
+       						</props>
+       					</property>
+       				</bean>
+       			</list>
+       		</property>
+       </bean>
+       <!-- 
+       		spring产生Mapper接口的代理对象
+       		MapperScannerConfigurer：
+       			扫描指定包下的mapper接口和mapper配置文件，
+       			产生mapper接口的代理对象(mapper接口 和 mapper.xml文件
+       			名字必须一样，而且放入同一个目录)，
+       			产生的代理对象的id是mappe接口名字首字母小写
+        -->
+       <bean id="" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+       		<!-- 注入sqlSessionFactory -->
+       		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+       		<property name="basePackage" value="com.jyd.mapper"></property>
+       </bean>
+</beans>

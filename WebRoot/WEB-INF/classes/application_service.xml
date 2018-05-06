@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 导入xsd xml文件的约束 -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx 
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/aop 
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        ">
+     <!-- 开启组件扫描 -->
+     <context:component-scan base-package="com.jyd.service.impl"></context:component-scan> 
+     <!-- 声明式事务 -->
+     <!-- 实例化事务管理器 -->
+     <bean id="transactionManager" 
+     	class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+     	<!-- 注入数据库连接池对象 -->
+     	<property name="dataSource" ref="dataSource"></property>
+     </bean>
+     <!-- 2 声明事务切面 -->
+     <tx:advice id="txAdvice" transaction-manager="transactionManager">
+     	<tx:attributes>
+     		<tx:method name="save*" propagation="REQUIRED" isolation="DEFAULT"/>
+     		<tx:method name="create*" propagation="REQUIRED" isolation="DEFAULT"/>
+     		<tx:method name="update*" propagation="REQUIRED" isolation="DEFAULT"/>
+     		<tx:method name="delete*" propagation="REQUIRED" isolation="DEFAULT"/>
+     		<tx:method name="add*" propagation="REQUIRED" isolation="DEFAULT"/>
+     		<tx:method name="*" propagation="REQUIRED" isolation="DEFAULT" 
+     		read-only="true"/>
+     	</tx:attributes>
+     </tx:advice>
+     <!-- 进行aop配置产生代理对象 -->
+     <aop:config>
+     	<aop:pointcut expression="execution(* com.jyd.service.impl.*.*(..))" id="pc"/>
+     	<aop:advisor advice-ref="txAdvice" pointcut-ref="pc"/>
+     </aop:config>
+</beans>
